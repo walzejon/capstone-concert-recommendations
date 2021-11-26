@@ -8,7 +8,7 @@ const TM_EVENTS_LINK = "https://app.ticketmaster.com/discovery/v2/events?" + myT
 var queryLink = "";
 let lat, lon, radius;
 
-
+//Hebehe
 
 // Gets the user's location with their permission and updates that data in the application.
 function locationSuccess1(position) {
