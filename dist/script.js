@@ -8,8 +8,6 @@ const TM_EVENTS_LINK = "https://app.ticketmaster.com/discovery/v2/events?" + myT
 var queryLink = "";
 let lat, lon, radius;
 
-//Hebehe
-
 // Gets the user's location with their permission and updates that data in the application.
 function locationSuccess1(position) {
    const latitude = position.coords.latitude;
@@ -602,9 +600,9 @@ function getRecArtistLinks(data){
    var url = "";
    if( localStorage.getItem("lat") == undefined || localStorage.getItem("lon") ==undefined || localStorage.getItem("radius") == undefined) {
       console.log("shiz undefined", localStorage.getItem("lat"), localStorage.getItem("lon"), localStorage.getItem("radius"));
-      // localStorage.setItem("radius", 15);
-      // localStorage.setItem("lat",47.65477);
-      // localStorage.setItem("lon",-122.31273);
+      localStorage.setItem("radius", 15);
+      localStorage.setItem("lat",47.65477);
+      localStorage.setItem("lon",-122.31273);
    } 
    //go through all tracks for artists
    for(var i = 0; i < data.tracks.length; i++){
