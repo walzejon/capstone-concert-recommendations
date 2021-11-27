@@ -382,7 +382,7 @@ function displayPlaying(){
    if(this.status == 200) {
       var data = JSON.parse(this.responseText);
       var nowPlayingText = "";
-      if(data.item != null) {
+      if(data != null && data.item != null) {
          var artist = "";
          for(var j = 0; j < data.item.artists.length; j++){
             artist += data.item.artists[j].name;
@@ -398,8 +398,7 @@ function displayPlaying(){
       console.log("401 Error, need to refesh Token");
       refreshAccessToken();
    } else {
-      console.log(this.status);
-      alert(this.status);
+      console.log(this.status, "Nothing Playing right now.");
    }
 }
 
@@ -502,6 +501,7 @@ function clickedOnTrack(index, data){
    // var chosenText = "You have selected " + title + " by " + artist;
    // var chosenHTML = "<h3>" + chosenText + "</h3>";
 
+   //Need to add the artists of this clicked track to handleRec so it can make links of it
    //Recomendation API call
    callAPI("GET", link, null, handleRec);
    return false;
@@ -523,7 +523,6 @@ function handleRec(){
       alert(this.status);
    }
 }
-
 
 function queryEachLink(links){
    var listHTML = "<table><tr>";
