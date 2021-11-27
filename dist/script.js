@@ -171,6 +171,7 @@ const TOP_TRACK = spotifyBaseLink + "v1/me/top/track";
 const NEW_RELEASE = spotifyBaseLink + "v1/browse/new-releases"
 const MY_TRACKS = spotifyBaseLink + "v1/me/tracks";
 const REC_LINK = spotifyBaseLink + "v1/recommendations?limit=" + REC_LIMIT;
+const NOW_PLAYING_LINK = spotifyBaseLink + "v1/me/player/currently-playing";
 
 //taken from https://developer.spotify.com/documentation/general/guides/authorization/implicit-grant/
 
@@ -183,7 +184,7 @@ $('#login').click(function(event){
 
 //Requests authorization for the application to access a user's data
 function requestAuthorization(){
-   var scopes = "playlist-read-private user-read-recently-played user-follow-read playlist-read-collaborative user-library-read user-top-read";
+   var scopes = "user-read-playback-state playlist-read-private user-read-recently-played user-follow-read playlist-read-collaborative user-library-read user-top-read";
    // var state = generateRandomString(16);
    // localStorage.setItem("stateKey", state);
    // i dont think i need the two below lines because i have these as global variables.
@@ -206,7 +207,6 @@ function onPageLoad(){
 }
 
 function handleRedirect(){
-   console.log("HANDLEREDIRECT");
    let code = getCode();
    fetchAccessToken(code);
    window.history.pushState("", "", redirect_uri); // removes extra stuff from URL
@@ -216,7 +216,6 @@ function handleRedirect(){
 
 // returns the 'code=' from the URL to complete authorization back to spotify
 function getCode(){
-   console.log("getCode");
    let code = null;
    const queryString = window.location.search;
    if ( queryString.length > 0) {
@@ -257,9 +256,7 @@ function callRefreshApi(body){
 }
 
 function handleRefresh(){
-   console.log("handleRefresh!");
    if(this.status == 200){
-      console.log("auth data below");
       var data = JSON.parse(this.responseText);
       console.log(data);
       var data = JSON.parse(this.responseText);
@@ -270,7 +267,7 @@ function handleRefresh(){
       }
       if (data.refresh_token != undefined){
          refresh_token = data.refresh_token;
-         console.log("Setting Refresh Token to:", refresh_token);
+         console.log("Setting Refresh Token");
          localStorage.setItem("refresh_token", refresh_token);
       }
       //tutoril has this: onPageLoad();
@@ -281,7 +278,6 @@ function handleRefresh(){
 }
 
 function callAuthorizationApi(body){
-   console.log("callAuthAPI");
    let xhr = new XMLHttpRequest();
    xhr.open("POST", TOKEN_LINK, true);
    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -292,15 +288,12 @@ function callAuthorizationApi(body){
 }
 
 function handleAuthorizationResponse(){
-   console.log("handleAuthorizationResponse");
    if(this.status == 200){
-      console.log("auth data below");
       var data = JSON.parse(this.responseText);
-      console.log(data);
       var data = JSON.parse(this.responseText);
       if (data.access_token != undefined){
          access_token = data.access_token;
-         console.log("Setting Access Token to: ",access_token);
+         console.log("Setting Access Token");
          localStorage.setItem("access_token", access_token);
       }
       if (data.refresh_token != undefined){
@@ -330,52 +323,77 @@ function callAPI(method, url, body, callback){
    xhr.setRequestHeader('Accept', 'application/json');
    xhr.setRequestHeader('Content-Type', 'application/json');
    xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem("access_token"));
-   console.log("Access Token during API call is: ", localStorage.getItem("access_token"));
    xhr.send(body);
    xhr.onload = callback;
-   xhr.onreadystatechange = function () {
-      if(xhr.readyState == 1) {
-          console.log('Request started.');
-      }
+//    xhr.onreadystatechange = function () {
+//       if(xhr.readyState == 1) {
+//           console.log('Request started.');
+//       }
       
-      if(xhr.readyState == 2) {
-          console.log('Headers received.');
-      }
+//       if(xhr.readyState == 2) {
+//           console.log('Headers received.');
+//       }
       
-      if (xhr.readyState == 3) {
-          console.log('Data loading..!');
-      }
-      if (xhr.readyState == 4) {
-          console.log('Request ended.');
-      }
-  }
-   xhr.onerror = () => {
-      console.error('Request failed.');
-  }
-  xhr.onprogress = (event) => {
-   // event.loaded returns how many bytes are downloaded
-   // event.total returns the total number of bytes
-   // event.total is only available if server sends `Content-Length` header
-   console.log(`Downloaded ${event.loaded} of ${event.total}`);
-   }
-   xhr.onabort = () => console.log("abort");
-   xhr.ontimeout = () => console.log('Request timeout.', xhr.responseURL);
+//       if (xhr.readyState == 3) {
+//           console.log('Data loading..!');
+//       }
+//       if (xhr.readyState == 4) {
+//           console.log('Request ended.');
+//       }
+//   }
+//    xhr.onerror = () => {
+//       console.error('Request failed.');
+//   }
+//   xhr.onprogress = (event) => {
+//    // event.loaded returns how many bytes are downloaded
+//    // event.total returns the total number of bytes
+//    // event.total is only available if server sends `Content-Length` header
+//    console.log(`Downloaded ${event.loaded} of ${event.total}`);
+//    }
+//    xhr.onabort = () => console.log("abort");
+//    xhr.ontimeout = () => console.log('Request timeout.', xhr.responseURL);
 }
 
 //Set's image and name on application
 function handleInfoResponses(){
-   console.log("INFO CALLBACK: this HandleInfo");
    if(this.status == 200) {
       var data = JSON.parse(this.responseText);
       console.log(data);
       if(data.images[0] != null){
          var stringHTML = "";
-         stringHTML = "<p>Name: " + data.display_name + "</p>";
-         stringHTML += "<img id='user-image' src='"+ data.images[0].url + "' alt='user profile image'>";
+         stringHTML = "<img id='user-image' src='"+ data.images[0].url + "' alt='user profile image'>";
+         stringHTML += "<p>Name: " + data.display_name + "</p>";
          $("#spotify-info").html(stringHTML);
          $('#user-image').css("width","80px");
          $('#user-image').css("height","80px");
+         //Make API call to get currently playing here if you want to do that. 
+         callAPI("GET", NOW_PLAYING_LINK, null, displayPlaying);
       }
+   } else if(this.status == 401){
+      console.log("401 Error, need to refesh Token");
+      refreshAccessToken();
+   } else {
+      console.log(this.status);
+      alert(this.status);
+   }
+}
+
+function displayPlaying(){
+   if(this.status == 200) {
+      var data = JSON.parse(this.responseText);
+      var nowPlayingText = "";
+      if(data.item != null) {
+         var artist = "";
+         for(var j = 0; j < data.item.artists.length; j++){
+            artist += data.item.artists[j].name;
+            if(j < data.item.artists.length-1){
+               artist += ", ";
+            }
+         }
+         nowPlayingText = "<p>Now Playing: " + data.item.name + " by " + artist + "</p>";
+      }
+      var infoHTMl = $("#spotify-info").html() + nowPlayingText;
+      $("#spotify-info").html(infoHTMl);
    } else if(this.status == 401){
       console.log("401 Error, need to refesh Token");
       refreshAccessToken();
@@ -445,13 +463,12 @@ function addSearchResultsToHTML(data){
    }
    resultHTML += "</ul>";
    $('#spotify-search-options').html(resultHTML);
-   //makeClickable(ids);
    makeClickable(data);
 }
 
 
 function makeClickable(data){
-   
+   //IF the number of suggested search results is changed this will have to be changed
    //when click, pass index and data
    //Banking on always having 10 tracks returned.
    //This cannot be in a loop because the result will change before the event fires every time the loop goes
@@ -468,7 +485,7 @@ function makeClickable(data){
 }
 
 function clickedOnTrack(index, data){
-   var name = data.tracks.items[index].name;
+   var title = data.tracks.items[index].name;
    var artist = "";
    for(var i = 0; i < data.tracks.items[index].artists.length; i++){
       artist += data.tracks.items[index].artists[i].name;
@@ -476,21 +493,21 @@ function clickedOnTrack(index, data){
          artist += ", ";
       }
    }
-   //Display name as feedback for user.
+   //Display title as feedback for user.
    var trackID = data.tracks.items[index].id;
    var link = REC_LINK + "&seed_tracks=" + trackID;
    $('#spotify-search-options').html("");
-   // var chosenText = "You have selected " + name + " by " + artist;
-   // var chosenHTML = "<h3>" + chosenText + "</h3>";
    //Feedback for which is chosen.
-   $('#track-entry').val(name + " - " +  artist);
+   $('#track-entry').val(title + " - " +  artist);
+   // var chosenText = "You have selected " + title + " by " + artist;
+   // var chosenHTML = "<h3>" + chosenText + "</h3>";
+
    //Recomendation API call
    callAPI("GET", link, null, handleRec);
    return false;
 }
 
 function handleRec(){
-   console.log("handleing");
    console.log(this.status);
    if(this.status == 200) {
       var data = JSON.parse(this.responseText);
@@ -505,6 +522,21 @@ function handleRec(){
       console.log(this.responseText);
       alert(this.status);
    }
+}
+
+
+function queryEachLink(links){
+   var listHTML = "<table><tr>";
+   listHTML += "<th>Event Name</th>";
+   listHTML += "<th>Date</th>";
+   listHTML += "<th>Distance</th>";
+   listHTML += "<th>Special Notes</th>";
+   listHTML += "<th>Link</th></tr>";
+   links.forEach(link => {
+      listHTML = recTMQuery(link, listHTML);
+   });
+   listHTML += "</table>";
+   $('#ticketmaster-rec-results').html(listHTML);
 }
 
 function recTMQuery(link, listHTML){
@@ -560,8 +592,7 @@ function recTMQuery(link, listHTML){
                         listHTML += "</tr>";
                      }
                   } else {
-                     listHTML+= "<tr><td colspan ='5'>No listed concerts in your area for "+ getKeyword(link)  +" </td></tr>";
-                     console.log("Unfortunately there were no events for ", getKeyword(link));
+                     listHTML+= "<tr><td id='no-concerts-for' colspan ='5'>No listed concerts in your area for "+ getKeyword(link)  +"</td></tr>";
                   }
                },
       error: function(xhr, status, err) {
@@ -577,22 +608,6 @@ function recTMQuery(link, listHTML){
 function getKeyword (str) {
    const url = new URL(str);
    return decodeURI(url.searchParams.get('keyword'));
- }
-
-function queryEachLink(links){
-   // navigator.geolocation.getCurrentPosition(locationSuccess2, locationError);
-   // event.preventDefault();
-   var listHTML = "<table><tr>";
-   listHTML += "<th>Event Name</th>";
-   listHTML += "<th>Date</th>";
-   listHTML += "<th>Distance</th>";
-   listHTML += "<th>Special Notes</th>";
-   listHTML += "<th>Link</th></tr>";
-   links.forEach(link => {
-      listHTML = recTMQuery(link, listHTML);
-   });
-   listHTML += "</table>";
-   $('#ticketmaster-rec-results').html(listHTML);
 }
 
 function getRecArtistLinks(data){
@@ -600,9 +615,12 @@ function getRecArtistLinks(data){
    var url = "";
    if( localStorage.getItem("lat") == undefined || localStorage.getItem("lon") ==undefined || localStorage.getItem("radius") == undefined) {
       console.log("shiz undefined", localStorage.getItem("lat"), localStorage.getItem("lon"), localStorage.getItem("radius"));
-      localStorage.setItem("radius", 15);
-      localStorage.setItem("lat",47.65477);
-      localStorage.setItem("lon",-122.31273);
+      // localStorage.setItem("radius", 15);
+      // localStorage.setItem("lat",47.65477);
+      // localStorage.setItem("lon",-122.31273);
+      navigator.geolocation.getCurrentPosition(locationSuccess2, locationError);
+      event.preventDefault();
+      
    } 
    //go through all tracks for artists
    for(var i = 0; i < data.tracks.length; i++){
@@ -611,7 +629,7 @@ function getRecArtistLinks(data){
             url = TM_EVENTS_LINK;
             url += "&keyword=" + encodeURI(data.tracks[i].artists[k].name);
             url += "&latlong=" + localStorage.getItem("lat") + "," + localStorage.getItem("lon");
-            url += "&radius=" + localStorage.getItem("radius");
+            url += "&radius=" + $("#radius-entry").val();
             url += "&unit=miles&locale=*";
             links.push(url);
          }
@@ -639,19 +657,13 @@ function locationSuccess2(position) {
 
   //Changing the radius in the query link
    var inputRad = $("#radius-entry").val();
-   if(inputRad > 0){
+   if(inputRad > radius){
       radius = inputRad;
    }
 
- 
-   //assembling the link
-   var queryLink = "https://app.ticketmaster.com/discovery/v2/events?apikey=zPNTyXBzoiIlL8DqjRVpzG4gsAVl3EwR";
-   queryLink += "&keyword=" + encodeURI(keyWord); ///!!!!!!!!!!!!
-   queryLink += "&latlong=" + lat + "," + lon;
-   queryLink += "&radius=" + radius;
-   queryLink += "&unit=miles&locale=*";
-
-   //Make query 
+   localStorage.setItem("radius", radius);
+   localStorage.setItem("lat",lat);
+   localStorage.setItem("lon",lon);
 }
 
 
@@ -659,7 +671,6 @@ function displayRecArtists(data){
    var recArtistsHTML = "<h3>Recommended Artists</h3><ul>";
    var artists = "";
    //loop through suggestions
-   console.log(data.tracks.length);
    for(var i = 0; i < data.tracks.length; i++) {
       artists = data.tracks[i].artists[0].name;
       recArtistsHTML += "<li>" + artists + "</li>";

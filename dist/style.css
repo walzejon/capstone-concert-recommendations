@@ -1,7 +1,13 @@
+:root {
+  --spotify-green: #1DB954;
+  --secondary-color: rgb(255, 255, 255);
+}
+
 #navbar{
   height:40dp;
   width:auto;
   background-color:darkgreen;
+  /* background-color: var(--spotify-color); */
 }
 #home-button{
   -webkit-backface-visibility: false;
@@ -195,4 +201,7 @@ table, th, td{
 #track-label{
   margin-left: 10px;
   display: below;
+}
+#no-concerts-for{
+  color: gray;
 }
