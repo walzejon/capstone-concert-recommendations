@@ -7,12 +7,21 @@
   height:40dp;
   width:auto;
   background-color:darkgreen;
+  display: flex; 
+  flex-direction: row;
+  justify-content: space-between;
   /* background-color: var(--spotify-color); */
 }
 #home-button{
   -webkit-backface-visibility: false;
   backface-visibility:false;
   margin-bottom: 10px;
+}
+
+#spotify-info{
+  width: 100px;
+  display: flex;
+  flex-direction: row;
 }
 
 .button {

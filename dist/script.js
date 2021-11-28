@@ -361,11 +361,11 @@ function handleInfoResponses(){
       console.log(data);
       if(data.images[0] != null){
          var stringHTML = "";
-         stringHTML = "<img id='user-image' src='"+ data.images[0].url + "' alt='user profile image'>";
-         stringHTML += "<p>Name: " + data.display_name + "</p>";
+         stringHTML = "<p>Name: " + data.display_name + "</p>";
+         stringHTML += "<img id='user-image' src='"+ data.images[0].url + "' alt='user profile image'>";
          $("#spotify-info").html(stringHTML);
-         $('#user-image').css("width","80px");
-         $('#user-image').css("height","80px");
+         $('#user-image').css("width","40px");
+         $('#user-image').css("height","40px");
          //Make API call to get currently playing here if you want to do that. 
          callAPI("GET", NOW_PLAYING_LINK, null, displayPlaying);
       }

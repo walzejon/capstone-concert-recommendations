@@ -17,13 +17,18 @@
   
   <div id="navbar">
     <button id="home-button" class ="button button1">Home</button>
+    <div id="spotify-info">
+    
+    </div>
   </div>
   <p id="location-ex">This application will use your current location to deliver nearby concert reccomendations.<br>
       For this reason, the browser may ask to use your current location when you search a track.</p>
   <form>
     <div id="first-step">
-      <h3 id="first-text">1) Login to Spotify to access reccomendations</h3>
+      <h3 id="first-text">1) Login to Spotify</h3>
       <button class="button button1" type="button" id="login">Spotify Login</button>
+      <!-- add logo "C:\Users\jonfu\OneDrive\Documents\Capstone\capstone-concert-recommendations\spotify-icons-logos\icons\02_CMYK\02_PNG\Spotify_Icon_CMYK_Green.png"
+ -->
     </div>
     <div id="second-step">
       <h3 id="second-text">2) Enter a search radius for events</h3>
@@ -50,19 +55,17 @@
   </form>
 
   <div>
-    <!-- I want this to be to the right of the list of recommended artists -->
-    <div id="ticketmaster-rec-results">
-
-    </div>
     <!-- This is the list of recommended artists from spotify -->
     <div id="spotify-rec-results"> 
 
     </div>
+    <!-- I want this to be to the right of the list of recommended artists -->
+    <div id="ticketmaster-rec-results">
+
+    </div>
   </div>
 
-  <div id="spotify-info">
-    
-  </div>
+  
   <div id="results">
     <p id="total-count"></p>
     <table class="table table-dark">
