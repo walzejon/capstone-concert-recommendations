@@ -122,8 +122,9 @@ table, th, td{
   list-style-type: none;
   padding: 0;
   margin: 0;
-  width: -moz-fit-content;
-  width: fit-content;
+  /* width: -moz-fit-content;
+  width: fit-content; */
+  width: 400px;
 }
 
 #search-results-list li a {
@@ -144,6 +145,7 @@ table, th, td{
 
 #ticketmaster-rec-results{
   float: right;
+  padding-bottom: 50px;
 }
 #first-step{
   white-space: nowrap;
