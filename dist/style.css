@@ -216,3 +216,15 @@ table, th, td{
 #no-concerts-for{
   color: gray;
 }
+#top-container{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+#left{
+  float: left;
+}
+#right{
+  float: right;
+  padding-right: 400px;
+}

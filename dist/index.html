@@ -22,39 +22,40 @@
     </div>
   </div>
 
-  <div id="left">
-    <p id="location-ex">This application will use your current location to deliver nearby concert reccomendations.<br>
-        For this reason, the browser may ask to use your current location when you search a track.</p>
-    <div id="first-step">
-      <h3 id="first-text">1) Login to Spotify</h3>
-      <button class="button button1" type="button" id="login">Spotify Login</button>
-      <!-- add logo "C:\Users\jonfu\OneDrive\Documents\Capstone\capstone-concert-recommendations\spotify-icons-logos\icons\02_CMYK\02_PNG\Spotify_Icon_CMYK_Green.png"-->
-    </div>
-    <div id="second-step">
-      <h3 id="second-text">2) Enter a search radius for events</h3>
-      <div id="second-action">
-        <input id="radius-entry" type="number" value="15" step="5">
-        <label id="radius-label" for="radius-entry">Search Radius (miles)</label>
+  <div id="top-section">
+    <div id="left">
+      <p id="location-ex">This application will use your current location and Spotify data to deliver nearby concert reccomendations.<br>
+          For this reason, the browser may ask to use your current location when you search a track.</p>
+      <div id="first-step">
+        <h3 id="first-text">1) Login to Spotify</h3>
+        <button class="button button1" type="button" id="login">Spotify Login</button>
+        <!-- add logo "C:\Users\jonfu\OneDrive\Documents\Capstone\capstone-concert-recommendations\spotify-icons-logos\icons\02_CMYK\02_PNG\Spotify_Icon_CMYK_Green.png"-->
       </div>
-    </div>
-    <div id="third-step">
-      <h3 id="third-text">3) Search for a track on Spotify</h3>
-      <div id="text-entry">
-        <input autocomplete="off" id="track-entry" type="text" size="20" maxLength = "100" placeholder = "Song Title">
-        <br>
-        <label id="track-label" for="track-entry">Song used to reccomend a concert</label>
-        <!-- <button type="submit" id="search-track" class="button button2">Search Track</button> -->
-        <div id="spotify-search-options">
-
+      <div id="second-step">
+        <h3 id="second-text">2) Enter a search radius for events</h3>
+        <div id="second-action">
+          <input id="radius-entry" type="number" value="15" step="5">
+          <label id="radius-label" for="radius-entry">Search Radius (miles)</label>
+        </div>
+      </div>
+      <div id="third-step">
+        <h3 id="third-text">3) Search for a track on Spotify</h3>
+        <div id="text-entry">
+          <input autocomplete="off" id="track-entry" type="text" size="20" maxLength = "100" placeholder = "Song Title">
+          <br>
+          <label id="track-label" for="track-entry">Song used to reccomend a concert</label>
+          <!-- <button type="submit" id="search-track" class="button button2">Search Track</button> -->
+          <div id="spotify-search-options">
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div id="right">
-    <!-- This is the list of recommended artists from spotify -->
-    <div id="spotify-rec-results"> 
+    <div id="right">
+      <!-- This is the list of recommended artists from spotify -->
+      <div id="spotify-rec-results"> 
 
+      </div>
     </div>
   </div>
   <!-- I want this to be to the right of the list of recommended artists -->

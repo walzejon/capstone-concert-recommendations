@@ -486,7 +486,9 @@ function makeClickable(data){
 function clickedOnTrack(index, data){
    var title = data.tracks.items[index].name;
    var artist = "";
+   var masterArtists = [];
    for(var i = 0; i < data.tracks.items[index].artists.length; i++){
+      if(!masterArtists.includes(data.tracks.items[index].artists[i].name)) masterArtists.push(data.tracks.items[index].artists[i].name);
       artist += data.tracks.items[index].artists[i].name;
       if(i < data.tracks.items[index].artists.length-1){
          artist += ", ";
@@ -501,7 +503,7 @@ function clickedOnTrack(index, data){
    // var chosenText = "You have selected " + title + " by " + artist;
    // var chosenHTML = "<h3>" + chosenText + "</h3>";
 
-   //Need to add the artists of this clicked track to handleRec so it can make links of it
+   //Need to pass masterArtists to handleRec....
    //Recomendation API call
    callAPI("GET", link, null, handleRec);
    return false;
@@ -528,6 +530,8 @@ function queryEachLink(links){
    var listHTML = "<table><tr>";
    listHTML += "<th>Event Name</th>";
    listHTML += "<th>Date</th>";
+   listHTML += "<th>Venue Name</th>";
+   listHTML += "<th>Address</th>";
    listHTML += "<th>Distance</th>";
    listHTML += "<th>Special Notes</th>";
    listHTML += "<th>Link</th></tr>";
@@ -563,11 +567,22 @@ function recTMQuery(link, listHTML){
                            var am_pm = date.getHours() >= 12 ? "PM" : "AM";
                            hours = hours < 10 ? "0" + hours : hours;
                            var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
-                           var seconds = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
-                           time = hours + ":" + minutes + ":" + seconds + " " + am_pm;
-                           var timeDate = json._embedded.events[i].dates.start.localDate + " at " + time
+                           time = hours + ":" + minutes + " " + am_pm;
+                           var mmddyy = date.getMonth()+1 + "/" + date.getDate() + "/" + date.getFullYear()%100;
+                           //console.log(mmddyy);
+                           // used to be json._embedded.events[i].dates.start.localDate
+                           var timeDate = mmddyy + " at " + time
                            listHTML += "<td>" + timeDate+ "</td>";
-                        }      
+                        }
+                        //Event Venu Name
+                        console.log( json._embedded.events[i]._embedded.venues[0].name);
+                        console.log(json._embedded.events[i]._embedded.venues[0].city.name, ", ",json._embedded.events[i]._embedded.venues[0].state.stateCode);
+                        listHTML += "<td>" + json._embedded.events[i]._embedded.venues[0].name + "</td>";
+                        
+                        //Event Venu Address
+                        listHTML += "<td>" + json._embedded.events[i]._embedded.venues[0].address.line1 +"\n" + json._embedded.events[i]._embedded.venues[0].city.name 
+                                           +  ", " + json._embedded.events[i]._embedded.venues[0].state.stateCode + "</td>";
+
                         //Event Distance 
                         if(json._embedded.events[i].distance != null) {
                            listHTML += "<td>" + json._embedded.events[i].distance + " miles</td>";
@@ -591,7 +606,7 @@ function recTMQuery(link, listHTML){
                         listHTML += "</tr>";
                      }
                   } else {
-                     listHTML+= "<tr><td id='no-concerts-for' colspan ='5'>No listed concerts in your area for "+ getKeyword(link)  +"</td></tr>";
+                     listHTML+= "<tr><td id='no-concerts-for' colspan ='7'>No listed concerts in your area for "+ getKeyword(link)  +"</td></tr>";
                   }
                },
       error: function(xhr, status, err) {
@@ -630,7 +645,7 @@ function getRecArtistLinks(data){
             url += "&latlong=" + localStorage.getItem("lat") + "," + localStorage.getItem("lon");
             url += "&radius=" + $("#radius-entry").val();
             url += "&unit=miles&locale=*";
-            links.push(url);
+            if(!links.includes(url)) links.push(url);
          }
    }
    //this does compile links. Storage of lat and lon is a problem.
@@ -669,11 +684,14 @@ function locationSuccess2(position) {
 function displayRecArtists(data){
    var recArtistsHTML = "<h3>Recommended Artists</h3><ul>";
    var artists = "";
+   var artistObject = [];
    //loop through suggestions
    for(var i = 0; i < data.tracks.length; i++) {
       artists = data.tracks[i].artists[0].name;
+      if(!artistObject.includes(artists)) artistObject.push(artists);
       recArtistsHTML += "<li>" + artists + "</li>";
       for(var art = 1; art < data.tracks[i].artists.length; art++){
+         if(!artistObject.includes(data.tracks[i].artists[art].name)) artistObject.push(data.tracks[i].artists[art].name);
          artists += ", " + data.tracks[i].artists[art].name;
          recArtistsHTML += "<li>" + data.tracks[i].artists[art].name + "</li>";
       }
