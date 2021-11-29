@@ -312,11 +312,11 @@ function handleAuthorizationResponse(){
 
 //Get's user information and manipulates it to place onto web page.
 function getInformation(){
-   callAPI("GET", INFO_LINK, null, handleInfoResponses);
+   callSpotifyAPI("GET", INFO_LINK, null, handleInfoResponses, "");
 }
 
 //Generic API call method to get data and make a callback
-function callAPI(method, url, body, callback){
+function callSpotifyAPI(method, url, body, callback, masterArtists){
    console.log("Calling API on ", url );
    let xhr = new XMLHttpRequest();
    xhr.open(method, url, true);
@@ -324,6 +324,7 @@ function callAPI(method, url, body, callback){
    xhr.setRequestHeader('Content-Type', 'application/json');
    xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem("access_token"));
    xhr.send(body);
+   xhr.masterArtists = masterArtists
    xhr.onload = callback;
 //    xhr.onreadystatechange = function () {
 //       if(xhr.readyState == 1) {
@@ -367,7 +368,7 @@ function handleInfoResponses(){
          $('#user-image').css("width","40px");
          $('#user-image').css("height","40px");
          //Make API call to get currently playing here if you want to do that. 
-         callAPI("GET", NOW_PLAYING_LINK, null, displayPlaying);
+         callSpotifyAPI("GET", NOW_PLAYING_LINK, null, displayPlaying, "");
       }
    } else if(this.status == 401){
       console.log("401 Error, need to refesh Token");
@@ -417,7 +418,7 @@ function searchTracks(){
       url += "&type=track";
       url += "&limit=" + SONG_LIMIT;
       console.log(url);
-      callAPI("GET", url, null, handleSearchInfo);
+      callSpotifyAPI("GET", url, null, handleSearchInfo, "");
    } else {
       //probably want to turn off the search suggestions here.
       $('#spotify-search-options').html("");
@@ -504,27 +505,12 @@ function clickedOnTrack(index, data){
    // var chosenText = "You have selected " + title + " by " + artist;
    // var chosenHTML = "<h3>" + chosenText + "</h3>";
 
-   //Need to pass masterArtists to handleRec....
    //Recomendation API call
-   callAPI2("GET", link, null, handleRec, masterArtists);
+   callSpotifyAPI("GET", link, null, handleRec, masterArtists);
    return false;
 }
 
-function callAPI2(method, url, body, callback, masterArtists){
-   console.log("Calling API on ", url );
-   let xhr = new XMLHttpRequest();
-   xhr.open(method, url, true);
-   xhr.setRequestHeader('Accept', 'application/json');
-   xhr.setRequestHeader('Content-Type', 'application/json');
-   xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem("access_token"));
-   xhr.send(body);
-   xhr.masterArtists = masterArtists
-   xhr.onload = callback;
-}
-
-
 function handleRec(){
-   // console.log(this.status);
    if(this.status == 200) {
       var data = JSON.parse(this.responseText);
       console.log(data);
@@ -539,19 +525,6 @@ function handleRec(){
       alert(this.status);
    }
 }
-// function handle0(){
-//    console.log("artist0", this.status);
-//    if(this.status == 200) {
-//       var data = JSON.parse(this.responseText);
-//       console.log(data);
-//       return "hebe";
-//    } else if(this.status == 401){
-//       refreshAccessToken();
-//    } else {
-//       console.log(this.responseText);
-//       alert(this.status);
-//    }
-// }
 
 function queryEachLink(links){
    var listHTML = "<table><tr>";
@@ -596,8 +569,6 @@ function recTMQuery(link, listHTML){
                            var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
                            time = hours + ":" + minutes + " " + am_pm;
                            var mmddyy = date.getMonth()+1 + "/" + date.getDate() + "/" + date.getFullYear()%100;
-                           //console.log(mmddyy);
-                           // used to be json._embedded.events[i].dates.start.localDate
                            var timeDate = mmddyy + " at " + time
                            listHTML += "<td>" + timeDate+ "</td>";
                         }
@@ -638,7 +609,6 @@ function recTMQuery(link, listHTML){
                   console.log("error on", link);
                   console.log(xhr.status);
                   console.log(err);
-                  // console.log(status.code);
                }
    });
    return listHTML;
@@ -703,9 +673,6 @@ function getRecArtistLinks(masterArtists){
    return links;
 }
 
-
-// navigator.geolocation.getCurrentPosition(locationSuccess2, locationError);
-// event.preventDefault();
 
 //makeLink & send query.
 function locationSuccess2(position) {
