@@ -486,6 +486,7 @@ function makeClickable(data){
 function clickedOnTrack(index, data){
    var title = data.tracks.items[index].name;
    var artist = "";
+   //Will just have artsits in selected song 
    var masterArtists = [];
    for(var i = 0; i < data.tracks.items[index].artists.length; i++){
       if(!masterArtists.includes(data.tracks.items[index].artists[i].name)) masterArtists.push(data.tracks.items[index].artists[i].name);
@@ -505,16 +506,32 @@ function clickedOnTrack(index, data){
 
    //Need to pass masterArtists to handleRec....
    //Recomendation API call
-   callAPI("GET", link, null, handleRec);
+   callAPI2("GET", link, null, handleRec, masterArtists);
    return false;
 }
 
+function callAPI2(method, url, body, callback, masterArtists){
+   console.log("Calling API on ", url );
+   let xhr = new XMLHttpRequest();
+   xhr.open(method, url, true);
+   xhr.setRequestHeader('Accept', 'application/json');
+   xhr.setRequestHeader('Content-Type', 'application/json');
+   xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem("access_token"));
+   xhr.send(body);
+   xhr.masterArtists = masterArtists
+   xhr.onload = callback;
+}
+
+
 function handleRec(){
-   console.log(this.status);
+   // console.log(this.status);
    if(this.status == 200) {
       var data = JSON.parse(this.responseText);
       console.log(data);
-      displayRecArtists(data);
+      //Get selected artist will be api call on 
+      // data.seeds[0].href - hangleOrig will get atist name & return. 
+      //var link0=data.seeds[0].href;
+      var masterArtists = displayRecArtists(data, this.masterArtists);
       var links = getRecArtistLinks(data);
       console.log(links);
       queryEachLink(links);
@@ -525,6 +542,19 @@ function handleRec(){
       alert(this.status);
    }
 }
+// function handle0(){
+//    console.log("artist0", this.status);
+//    if(this.status == 200) {
+//       var data = JSON.parse(this.responseText);
+//       console.log(data);
+//       return "hebe";
+//    } else if(this.status == 401){
+//       refreshAccessToken();
+//    } else {
+//       console.log(this.responseText);
+//       alert(this.status);
+//    }
+// }
 
 function queryEachLink(links){
    var listHTML = "<table><tr>";
@@ -575,8 +605,6 @@ function recTMQuery(link, listHTML){
                            listHTML += "<td>" + timeDate+ "</td>";
                         }
                         //Event Venu Name
-                        console.log( json._embedded.events[i]._embedded.venues[0].name);
-                        console.log(json._embedded.events[i]._embedded.venues[0].city.name, ", ",json._embedded.events[i]._embedded.venues[0].state.stateCode);
                         listHTML += "<td>" + json._embedded.events[i]._embedded.venues[0].name + "</td>";
                         
                         //Event Venu Address
@@ -681,21 +709,25 @@ function locationSuccess2(position) {
 }
 
 
-function displayRecArtists(data){
+function displayRecArtists(data, masterArtists){
    var recArtistsHTML = "<h3>Recommended Artists</h3><ul>";
    var artists = "";
-   var artistObject = [];
    //loop through suggestions
    for(var i = 0; i < data.tracks.length; i++) {
       artists = data.tracks[i].artists[0].name;
-      if(!artistObject.includes(artists)) artistObject.push(artists);
-      recArtistsHTML += "<li>" + artists + "</li>";
+      if(!masterArtists.includes(artists)){
+         masterArtists.push(artists);
+         recArtistsHTML += "<li>" + artists + "</li>";
+      }
       for(var art = 1; art < data.tracks[i].artists.length; art++){
-         if(!artistObject.includes(data.tracks[i].artists[art].name)) artistObject.push(data.tracks[i].artists[art].name);
-         artists += ", " + data.tracks[i].artists[art].name;
-         recArtistsHTML += "<li>" + data.tracks[i].artists[art].name + "</li>";
+         if(!masterArtists.includes(data.tracks[i].artists[art].name)){
+            masterArtists.push(data.tracks[i].artists[art].name);
+            artists += ", " + data.tracks[i].artists[art].name;
+            recArtistsHTML += "<li>" + data.tracks[i].artists[art].name + "</li>";
+         }
       }
    }
    recArtistsHTML +="</ul>";
    $('#spotify-rec-results').html(recArtistsHTML);
+   return masterArtists;
 }
