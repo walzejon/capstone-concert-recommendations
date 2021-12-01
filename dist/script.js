@@ -368,7 +368,7 @@ function handleInfoResponses(){
          $('#user-image').css("width","40px");
          $('#user-image').css("height","40px");
          //Make API call to get currently playing here if you want to do that. 
-         callSpotifyAPI("GET", NOW_PLAYING_LINK, null, displayPlaying, "");
+         //callSpotifyAPI("GET", NOW_PLAYING_LINK, null, displayPlaying, "");
       }
    } else if(this.status == 401){
       console.log("401 Error, need to refesh Token");
@@ -391,7 +391,7 @@ function displayPlaying(){
                artist += ", ";
             }
          }
-         nowPlayingText = "<p>Now Playing: " + data.item.name + " by " + artist + "</p>";
+         nowPlayingText = "<p float='bottom'>Now Playing: " + data.item.name + " by " + artist + "</p>";
       }
       var infoHTMl = $("#spotify-info").html() + nowPlayingText;
       $("#spotify-info").html(infoHTMl);
@@ -528,6 +528,7 @@ function handleRec(){
 
 function queryEachLink(links){
    var listHTML = "<table><tr>";
+   listHTML += "<th>Search Keyword</th>";
    listHTML += "<th>Event Name</th>";
    listHTML += "<th>Date</th>";
    listHTML += "<th>Venue Name</th>";
@@ -553,8 +554,13 @@ function recTMQuery(link, listHTML){
                   //see if there is an event, then make table with event
                   if(json.page.totalElements != 0) {
                      for(var i = 0 ;i < json._embedded.events.length; i++){
+                        
+                        //Keyword
+                        listHTML += "<tr><td>" + getKeyword(link) + "</td>";
+
+
                         //Event Name
-                        listHTML += "<tr><td>" + json._embedded.events[i].name + "</td>";
+                        listHTML += "<td>" + json._embedded.events[i].name + "</td>";
 
                         //Event Date                        
                         if(json._embedded.events[i].dates.start.dateTBD == true || json._embedded.events[i].dates.start.dateTBA == true){
@@ -602,7 +608,7 @@ function recTMQuery(link, listHTML){
                         listHTML += "</tr>";
                      }
                   } else {
-                     listHTML+= "<tr><td id='no-concerts-for' colspan ='7'>No listed concerts in your area for "+ getKeyword(link)  +"</td></tr>";
+                     listHTML+= "<tr><td id='no-concerts-for' colspan ='8'>No listed concerts in your area for "+ getKeyword(link)  +"</td></tr>";
                   }
                },
       error: function(xhr, status, err) {
