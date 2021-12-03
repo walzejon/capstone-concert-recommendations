@@ -3,6 +3,8 @@
   --secondary-color: rgb(255, 255, 255);
 }
 
+
+
 #navbar{
   height:40dp;
   width:auto;
@@ -35,6 +37,8 @@
   margin: 4px 2px;
   transition-duration: 0.4s;
   cursor: pointer;
+  font-family: Gotham-light;
+  font-weight: bold;
 }
 
 .button1 {
@@ -137,6 +141,8 @@ table, th, td{
   color: black; /* Add a black text color */
   display: block; /* Make it into a block element to fill the whole list */
   width: 100;
+  font-family: Gotham;
+  font-weight: medium;
 }
 
 #search-results-list li a:hover:not(.header) {
@@ -189,6 +195,7 @@ table, th, td{
   border: 1px solid #ddd; /* Add a grey border */
   margin-bottom: 12px; /* Add some space below the input */
   display: flex;
+
 }
 #radius-label{
   display: below;
@@ -209,10 +216,24 @@ table, th, td{
 #text-entry{
   align-self: auto;
 }
+::placeholder{
+  font-family: Gotham-light;
+}
 #track-label{
   margin-left: 10px;
   display: below;
 }
+
+#spotify-rec-results{
+  margin-top: 20px;
+  margin-left: 25px;
+  font-family: Gotham-light;
+  font-weight: bold;
+  border: black 1px solid;
+  padding:10px 10px 10px 10px;
+  visibility:hidden;
+}
+
 #no-concerts-for{
   color: gray;
 }
@@ -227,4 +248,63 @@ table, th, td{
 #right{
   float: right;
   padding-right: 400px;
+}
+
+
+
+
+/* Font Related */
+@font-face {
+  font-family: 'Gotham';
+  src: url(../Gotham-Font/GothamMedium.ttf);
+  font-weight: medium;
+}
+@font-face {
+  font-family: Gotham-light;
+  src: url(../Gotham-Font/GothamLight.ttf);
+  font-weight: lighter;
+}
+
+@font-face {
+  font-family: Gotham-thin;
+  src: url(../Gotham-Font/Gotham-Thin.otf);
+}
+@font-face {
+  font-family: Gotham;
+  src: url(../Gotham-Font/GothamBold.ttf);
+  font-weight: bold;
+}
+@font-face {
+  font-family: Gotham-book;
+  src: url(../Gotham-Font/GothamBook.ttf);
+}
+h1{
+  font-family:Gotham;
+  font-weight: lighter;
+}
+p{
+  font-family: Gotham-light;
+  font-weight: bold;
+  
+}
+h3{
+  font-family: Gotham;
+}
+label{
+  font-family: Gotham-light;
+  font-size: 11pt;
+}
+
+table{
+  margin-top: 25px;
+  font-family: Gotham-light;
+  font-weight: bold;
+}
+th{
+  font-family: Gotham;
+}
+
+/* This is to get the explaination to not extend too far to the right */
+#location-ex{
+  width: 750px;
 }

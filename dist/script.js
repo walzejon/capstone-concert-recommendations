@@ -379,6 +379,7 @@ function handleInfoResponses(){
    }
 }
 
+//Callback to display information pertaining to the current song being played by the user.
 function displayPlaying(){
    if(this.status == 200) {
       var data = JSON.parse(this.responseText);
@@ -535,6 +536,7 @@ function queryEachLink(links){
    listHTML += "<th>Address</th>";
    listHTML += "<th>Distance</th>";
    listHTML += "<th>Special Notes</th>";
+   listHTML += "<th>Price</th>";
    listHTML += "<th>Link</th></tr>";
    links.forEach(link => {
       listHTML = recTMQuery(link, listHTML);
@@ -599,6 +601,10 @@ function recTMQuery(link, listHTML){
                            listHTML += "<td>N/A</td>";
                         }
 
+                        //Event Price
+                        var price = json._embedded.events[i].priceRanges[0].min + " " + json._embedded.events[i].priceRanges[0].currency;
+                        listHTML += "<td>" + price + "</td>";
+
                         // //Event Link
                         if(json._embedded.events[i].url != null) {
                            listHTML += "<td><a href='" + json._embedded.events[i].url + "' >Link to tickets </a></td>";
@@ -608,7 +614,7 @@ function recTMQuery(link, listHTML){
                         listHTML += "</tr>";
                      }
                   } else {
-                     listHTML+= "<tr><td id='no-concerts-for' colspan ='8'>No listed concerts in your area for "+ getKeyword(link)  +"</td></tr>";
+                     listHTML+= "<tr><td id='no-concerts-for' colspan ='9'>No listed concerts in your area for "+ getKeyword(link)  +"</td></tr>";
                   }
                },
       error: function(xhr, status, err) {
@@ -669,6 +675,7 @@ function getRecArtistLinks(masterArtists){
    //go through all tracks for artists
    for(var i = 0; i < masterArtists.length; i++){
          url = TM_EVENTS_LINK;
+         if(masterArtists[i].includes("&")) masterArtists[i]=masterArtists[i].replace("&","and");
          url += "&keyword=" + encodeURI(masterArtists[i]);
          url += "&latlong=" + localStorage.getItem("lat") + "," + localStorage.getItem("lon");
          url += "&radius=" + $("#radius-entry").val();
@@ -724,5 +731,6 @@ function displayRecArtists(data, masterArtists){
    }
    recArtistsHTML +="</ul>";
    $('#spotify-rec-results').html(recArtistsHTML);
+   $('#spotify-rec-results').css("visibility", "visible");
    return masterArtists;
 }
