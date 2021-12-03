@@ -272,8 +272,8 @@ function handleRefresh(){
       }
       //tutoril has this: onPageLoad();
    } else {
-      console.log(this.responseText);
-      alert(this.responseText);
+      // console.log(this.responseText);
+      // alert(this.responseText);
    }
 }
 
@@ -439,6 +439,7 @@ function handleSearchInfo(){
          addSearchResultsToHTML(data);
       }
    } else if(this.status == 401){
+      alert("You may not have logged into Spotify yet, please log in first to get recommendations.");
       refreshAccessToken();
    } else {
       console.log(this.responseText);
@@ -670,8 +671,8 @@ function getRecArtistLinks(masterArtists){
       // localStorage.setItem("lon",-122.31273);
       navigator.geolocation.getCurrentPosition(locationSuccess2, locationError);
       event.preventDefault();
-      
    } 
+   console.log(localStorage.getItem("lat"), localStorage.getItem("lon"), localStorage.getItem("radius"));
    //go through all tracks for artists
    for(var i = 0; i < masterArtists.length; i++){
          url = TM_EVENTS_LINK;
