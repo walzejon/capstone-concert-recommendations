@@ -315,7 +315,13 @@ function getInformation(){
    callSpotifyAPI("GET", INFO_LINK, null, handleInfoResponses, "");
 }
 
-//Generic API call method to get data and make a callback
+//Generic API method for Spotify to get data and make a callback
+//Method - either "GET" or "POST", depending on intentions
+//url - String of url with API endpoint that user wants to call
+//body - usually null, containing a body for API call
+//callback - a callback method to fire when request is complete
+//masterAritsts - included to keep a list of all recommended artstist throughout
+//                recomemendation generation
 function callSpotifyAPI(method, url, body, callback, masterArtists){
    console.log("Calling API on ", url );
    let xhr = new XMLHttpRequest();
@@ -516,9 +522,10 @@ function handleRec(){
    if(this.status == 200) {
       var data = JSON.parse(this.responseText);
       console.log(data);
+      //make master then display.
       var masterArtists = displayRecArtists(data, this.masterArtists);
       var links = getRecArtistLinks(masterArtists);
-      console.log(links);
+      //for each link queryEachlink could also keep number of events. 
       queryEachLink(links);
    } else if(this.status == 401){
       refreshAccessToken();
@@ -528,6 +535,7 @@ function handleRec(){
    }
 }
 
+// Make a lsit of all concerts per link
 function queryEachLink(links){
    var listHTML = "<table><tr>";
    listHTML += "<th>Search Keyword</th>";
@@ -539,8 +547,11 @@ function queryEachLink(links){
    listHTML += "<th>Special Notes</th>";
    listHTML += "<th>Price</th>";
    listHTML += "<th>Link</th></tr>";
+   // var counts = [];
+   //make object {link, count}
    links.forEach(link => {
       listHTML = recTMQuery(link, listHTML);
+
    });
    listHTML += "</table>";
    $('#ticketmaster-rec-results').html(listHTML);
@@ -676,8 +687,11 @@ function getRecArtistLinks(masterArtists){
    //go through all tracks for artists
    for(var i = 0; i < masterArtists.length; i++){
          url = TM_EVENTS_LINK;
-         if(masterArtists[i].includes("&")) masterArtists[i]=masterArtists[i].replace("&","and");
-         url += "&keyword=" + encodeURI(masterArtists[i]);
+         if(masterArtists[i].includes("&")){
+            url += "&keyword=" + encodeURI(masterArtists[i].replace("&","and"));
+         } else {
+            url += "&keyword=" + encodeURI(masterArtists[i]);
+         }
          url += "&latlong=" + localStorage.getItem("lat") + "," + localStorage.getItem("lon");
          url += "&radius=" + $("#radius-entry").val();
          url += "&unit=miles&locale=*";
