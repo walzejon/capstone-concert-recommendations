@@ -8,7 +8,7 @@
 #navbar{
   height:40dp;
   width:auto;
-  background-color:darkgreen;
+  background-color:var(--spotify-green);
   display: flex; 
   flex-direction: row;
   justify-content: space-between;
@@ -44,26 +44,26 @@
 .button1 {
   background-color: white; 
   color: black; 
-  border: 2px solid #4CAF50;
+  border: 2px solid var(--spotify-green);
   margin:10px 10px 0px 10px;
 }
 
 .button1:hover {
-  background-color: #4CAF50;
+  background-color: var(--spotify-green);
   color: white;
 }
 
 .button2 {
   background-color: white; 
   color: black; 
-  border: 2px solid #4CAF50;
+  border: 2px solid var(--spotify-green);
   text-decoration: none;
   padding: 4px 8px;
   
 }
 
 .button2:hover {
-  background-color: #4CAF50;
+  background-color:var(--spotify-green);
   color: white;
 }
 
@@ -94,12 +94,12 @@
   cursor: pointer;
   background-color: white; 
   color: black; 
-  border: 2px solid #4CAF50;
+  border: 2px solid var(--spotify-green);
   margin-left:10px;
   margin-top: 10px;
 }
 #submit:hover {
-  background-color: #4CAF50;
+  background-color:var(--spotify-green);
   color: white;
 }
 
@@ -132,7 +132,7 @@ table, th, td{
 }
 
 #search-results-list li a {
-  border: 1px solid #4CAF50; /* Add a border to all links */
+  border: 1px solid var(--spotify-green); /* Add a border to all links */
   margin-top: -1px; /* Prevent double borders */
   background-color: white; /* Grey background color */
   padding: 12px; /* Add some padding */
@@ -146,7 +146,7 @@ table, th, td{
 }
 
 #search-results-list li a:hover:not(.header) {
-  background-color: #4CAF50; /* Add a hover effect to all links, except for headers */
+  background-color: var(--spotify-green); /* Add a hover effect to all links, except for headers */
 }
 
 #ticketmaster-rec-results{

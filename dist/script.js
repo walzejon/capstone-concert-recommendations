@@ -643,35 +643,6 @@ function getKeyword (str) {
    return decodeURI(url.searchParams.get('keyword'));
 }
 
-//Old one went through the data, this time its just a list 
-// function getRecArtistLinks(data){
-//    var links = [];
-//    var url = "";
-//    if( localStorage.getItem("lat") == undefined || localStorage.getItem("lon") ==undefined || localStorage.getItem("radius") == undefined) {
-//       console.log("shiz undefined", localStorage.getItem("lat"), localStorage.getItem("lon"), localStorage.getItem("radius"));
-//       // localStorage.setItem("radius", 15);
-//       // localStorage.setItem("lat",47.65477);
-//       // localStorage.setItem("lon",-122.31273);
-//       navigator.geolocation.getCurrentPosition(locationSuccess2, locationError);
-//       event.preventDefault();
-      
-//    } 
-//    //go through all tracks for artists
-//    for(var i = 0; i < data.tracks.length; i++){
-//          //go through all artists in a track and make new link
-//          for(var k = 0; k < data.tracks[i].artists.length; k++){
-//             url = TM_EVENTS_LINK;
-//             url += "&keyword=" + encodeURI(data.tracks[i].artists[k].name);
-//             url += "&latlong=" + localStorage.getItem("lat") + "," + localStorage.getItem("lon");
-//             url += "&radius=" + $("#radius-entry").val();
-//             url += "&unit=miles&locale=*";
-//             if(!links.includes(url)) links.push(url);
-//          }
-//    }
-//    //this does compile links. Storage of lat and lon is a problem.
-//    return links;
-// }
-
 function getRecArtistLinks(masterArtists){
    var links = [];
    var url = "";
