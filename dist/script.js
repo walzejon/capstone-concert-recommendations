@@ -522,11 +522,12 @@ function handleRec(){
    if(this.status == 200) {
       var data = JSON.parse(this.responseText);
       console.log(data);
-      //make master then display.
       var masterArtists = displayRecArtists(data, this.masterArtists);
       var links = getRecArtistLinks(masterArtists);
-      //for each link queryEachlink could also keep number of events. 
-      queryEachLink(links);
+      var artistAndCount = queryEachLink(links, masterArtists);
+      //now resetRecArtists with artistAndCount
+      resetRecArtists(artistAndCount);
+      console.log(artistAndCount);
    } else if(this.status == 401){
       refreshAccessToken();
    } else {
@@ -535,8 +536,19 @@ function handleRec(){
    }
 }
 
+function resetRecArtists(artistAndCount){
+   var recArtistsHTML = "<h3>Recommended Artists</h3><ul>";
+   artistAndCount.forEach((count, artist, artistAndCount) => {
+      console.log(artist, count);
+      recArtistsHTML += "<li>" + artist + " - " + count + "</li>";
+    });
+    recArtistsHTML +="</ul>";
+   $('#spotify-rec-results').html(recArtistsHTML);
+   //$('#spotify-rec-results').css("visibility", "visible");
+}
+
 // Make a lsit of all concerts per link
-function queryEachLink(links){
+function queryEachLink(links, masterAritsts){
    var listHTML = "<table><tr>";
    listHTML += "<th>Search Keyword</th>";
    listHTML += "<th>Event Name</th>";
@@ -549,15 +561,21 @@ function queryEachLink(links){
    listHTML += "<th>Link</th></tr>";
    // var counts = [];
    //make object {link, count}
+   var i = 0;
+   var artistAndCount = new Map();
    links.forEach(link => {
-      listHTML = recTMQuery(link, listHTML);
-
+      var eventQuery = recTMQuery(link, listHTML);
+      listHTML = eventQuery.listHTML;
+      artistAndCount.set(masterAritsts[i], eventQuery.count);
+      i++;
    });
    listHTML += "</table>";
    $('#ticketmaster-rec-results').html(listHTML);
+   return artistAndCount;
 }
 
 function recTMQuery(link, listHTML){
+   var count = 0;
    $.ajax({
       type:"GET",
       url:link,
@@ -624,9 +642,11 @@ function recTMQuery(link, listHTML){
                            listHTML += "<td>No link available</td>";
                         }
                         listHTML += "</tr>";
+                        count++;
                      }
                   } else {
-                     listHTML+= "<tr><td id='no-concerts-for' colspan ='9'>No listed concerts in your area for "+ getKeyword(link)  +"</td></tr>";
+                     count = 0;
+                     //listHTML+= "<tr><td id='no-concerts-for' colspan ='9'>No listed concerts in your area for "+ getKeyword(link)  +"</td></tr>";
                   }
                },
       error: function(xhr, status, err) {
@@ -635,13 +655,14 @@ function recTMQuery(link, listHTML){
                   console.log(err);
                }
    });
-   return listHTML;
+   return {listHTML, count};
 }
 
 function getKeyword (str) {
    const url = new URL(str);
    return decodeURI(url.searchParams.get('keyword'));
 }
+
 
 function getRecArtistLinks(masterArtists){
    var links = [];
