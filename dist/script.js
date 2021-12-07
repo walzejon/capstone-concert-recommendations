@@ -540,7 +540,11 @@ function resetRecArtists(artistAndCount){
    var recArtistsHTML = "<h3>Recommended Artists</h3><ul>";
    artistAndCount.forEach((count, artist, artistAndCount) => {
       console.log(artist, count);
-      recArtistsHTML += "<li>" + artist + " - " + count + "</li>";
+      // recArtistsHTML += "<li>" + artist + " - " + count + "</li>";
+      if(count == 1) {
+         recArtistsHTML += "<li>" +" "+  count + " show  --- " + artist + "</li>";
+      } else recArtistsHTML += "<li>" + count + " shows\t - " + artist + "</li>";
+
     });
     recArtistsHTML +="</ul>";
    $('#spotify-rec-results').html(recArtistsHTML);
