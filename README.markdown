@@ -1,5 +1,5 @@
 # Concert Recommendation Application
-H2 Designed and built by Jonathan Walzer
+*Designed and built by Jonathan Walzer*
 This application recommends concerts to a user by integrating Spotify's and Ticketmaster's APIs. The user logs into Spotify,
 and selects a track from Spotify. The application then gets track recommendations from that input track from Spotify's recommendation
 system. The application parses through the artists listed in each of these tracks (including featured artists) and searches Ticketmaster
