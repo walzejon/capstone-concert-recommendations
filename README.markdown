@@ -6,6 +6,7 @@ and selects a track from Spotify. The application then gets track recommendation
 system. The application parses through the artists listed in each of these tracks (including featured artists) and searches Ticketmaster
 for any events matching that artists' keyword.
 
+[!IMPORTANT]
 This project is currently set up to run on a local machine and set to run with my personal Spotify developer account.
 
 Important design updates TODO:
