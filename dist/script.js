@@ -104,6 +104,7 @@ $( document ).ready(function() {
       event.preventDefault();
       //make results section visible
       document.getElementById('results').style.visibility='visible';
+      console.log(3!='3');
    });
 
     //Making sure that the radius input number is valid
@@ -745,3 +746,4 @@ function displayRecArtists(data, masterArtists){
    $('#spotify-rec-results').css("visibility", "visible");
    return masterArtists;
 }
+
